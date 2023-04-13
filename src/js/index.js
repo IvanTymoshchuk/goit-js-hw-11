@@ -1,7 +1,6 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import createGalleryCards from '../templates/gallery-cards.hbs';
 import { fetchImages } from './fetchImages';
 
 const searchForm = document.getElementById('search-form');
