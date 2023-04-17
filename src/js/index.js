@@ -1,8 +1,101 @@
+import { PixabayAPI } from './PixabayAPI';
+import createGalleryCard from '../templates/gallery-cards.hbs';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { fetchImages } from './fetchImages';
 
+const refs = {
+  searchForm: document.getElementById('search-form'),
+  gallery: document.querySelector('.js-gallery'),
+};
+
+Notiflix.Report.info(
+  ' 🤟🏼 Hello my Friend!',
+  'This is my latest JS homework,enjoy looking at the photos 😜',
+  'Okay'
+);
+
+const pixabayApi = new PixabayAPI();
+
+let lightbox = new SimpleLightbox('.gallery__link', {
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+
+refs.searchForm.addEventListener('submit', onRenderPage);
+
+async function onRenderPage(e) {
+  e.preventDefault();
+
+  refs.gallery.innerHTML = '';
+
+  const searchQuery = e.currentTarget.elements.searchQuery.value.trim();
+  pixabayApi.query = searchQuery;
+
+  pixabayApi.resetPage();
+  pixabayApi.page = 1;
+
+  try {
+    const response = await pixabayApi.fetchPhotosByQuery();
+    const totalPicturs = response.data.totalHits;
+
+    if (searchQuery === '' || totalPicturs === 0) {
+      alertNoEmptySearch();
+      return;
+    }
+
+    createMarkup(response.data.hits);
+    lightbox.refresh();
+
+    Notiflix.Notify.success(`Hooray! We found ${totalPicturs} images.`);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function onLoadMore() {
+  pixabayApi.page += 1;
+
+  try {
+    const response = await pixabayApi.fetchPhotosByQuery();
+    createMarkup(response.data.hits);
+
+    lightbox.refresh();
+  } catch (err) {
+    alertEndOfSearch();
+  }
+}
+
+function createMarkup(hits) {
+  const markup = createGalleryCard(hits);
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
+}
+
+function alertNoEmptySearch() {
+  Notiflix.Notify.failure(
+    'The search string cannot be empty. Please specify your search query.'
+  );
+}
+
+function alertEndOfSearch() {
+  Notiflix.Notify.warning(
+    "We're sorry, but you've reached the end of search results."
+  );
+}
+
+// Функція для бескінечного скролу
+function handleScroll() {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    onLoadMore();
+  }
+}
+window.addEventListener('scroll', handleScroll);
+
+// ------- 2 variant --------
+
+/*
 const searchForm = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
 
@@ -127,3 +220,4 @@ function showLoadMorePage() {
 
 // Додати подію на прокручування сторінки, яка викликає функцію showLoadMorePage
 window.addEventListener('scroll', showLoadMorePage);
+*/

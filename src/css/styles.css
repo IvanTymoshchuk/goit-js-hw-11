@@ -102,6 +102,9 @@ button:hover::before {
 button:active {
   background: linear-gradient(32deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4);
 }
+p {
+  margin: 0;
+}
 
 .container {
   padding-left: 15px;
@@ -127,7 +130,6 @@ button:active {
   min-width: 320px;
   flex-basis: calc((100% - 80px) / 4);
   border: none;
-  border-radius: 10px;
   overflow: hidden;
   transition: all 0.3s;
   text-decoration: none;
@@ -167,3 +169,6 @@ button:active {
 .info-item:not(:first-child) {
   margin-left: 5px;
 }
+
+
+
