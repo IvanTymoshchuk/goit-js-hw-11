@@ -52,6 +52,7 @@ async function onRenderPage(e) {
 
     createMarkup(response.data.hits);
     lightbox.refresh();
+    autoScroll();
 
     Notiflix.Notify.success(`Hooray! We found ${totalPicturs} images.`);
   } catch (err) {
@@ -64,9 +65,20 @@ async function onLoadMore() {
 
   try {
     const response = await pixabayApi.fetchPhotosByQuery();
+
+    const lastPage = Math.ceil(response.data.totalHits / pixabayApi.per_page)
+
     createMarkup(response.data.hits);
 
     lightbox.refresh();
+    autoScroll();
+
+    if (lastPage === pixabayApi.page) {
+
+      alertEndOfSearch();
+      window.removeEventListener('scroll', handleScroll);
+      return;
+    }
   } catch (err) {
     alertEndOfSearch();
   }
@@ -97,6 +109,20 @@ function handleScroll() {
   }
 }
 window.addEventListener('scroll', handleScroll);
+
+  // Цей код дозволяє автоматично прокручувати сторінку на висоту 2 карток галереї, коли вона завантажується
+function autoScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
+
+
 
 // ------- 2 variant --------
 
