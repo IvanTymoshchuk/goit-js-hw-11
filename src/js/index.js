@@ -36,11 +36,16 @@ async function onRenderPage(e) {
   pixabayApi.resetPage();
   pixabayApi.page = 1;
 
+  if (searchQuery === '') {
+    alertNoEmptySearch();
+    return;
+  }
+
   try {
     const response = await pixabayApi.fetchPhotosByQuery();
     const totalPicturs = response.data.totalHits;
 
-    if (searchQuery === '' || totalPicturs === 0) {
+    if (totalPicturs  === 0) {
       alertNoEmptySearch();
       return;
     }
