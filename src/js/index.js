@@ -27,6 +27,7 @@ refs.searchForm.addEventListener('submit', onRenderPage);
 
 async function onRenderPage(e) {
   e.preventDefault();
+  window.addEventListener('scroll', handleScroll);
 
   refs.gallery.innerHTML = '';
 
@@ -108,7 +109,7 @@ function handleScroll() {
     onLoadMore();
   }
 }
-window.addEventListener('scroll', handleScroll);
+
 
   // Цей код дозволяє автоматично прокручувати сторінку на висоту 2 карток галереї, коли вона завантажується
 function autoScroll() {
